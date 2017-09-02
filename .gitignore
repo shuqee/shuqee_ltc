@@ -1,2 +1,3 @@
-/mdk/MDK-ARM/*.admin
+
 /mdk/MDK-ARM/shuqee_ltc
+/shuqee_ltc_stm32f103/mdk/MDK-ARM/*.admin
