@@ -1,3 +1,4 @@
 
 /mdk/MDK-ARM/shuqee_ltc
 /shuqee_ltc_stm32f103/mdk/MDK-ARM/*.admin
+/shuqee_ltc_stm32f407/mdk/MDK-ARM/TFT_LCD
