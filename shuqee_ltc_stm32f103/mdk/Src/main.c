@@ -43,11 +43,16 @@
 #include "user_config.h"
 #include "user_io.h"
 #include "user_time.h"
+#include "user_spi.h"
+#include "spi_flash.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+SPI_HandleTypeDef hspi2;
+
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
+TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -97,6 +102,8 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_SPI2_Init(void);
+static void MX_TIM4_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -134,9 +141,13 @@ int main(void)
   MX_GPIO_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_SPI2_Init();
+  MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
 	user_io_init();
+	user_spi_init();
+	spi_flash_init();
 	user_time_init();
   /* USER CODE END 2 */
 
@@ -199,6 +210,29 @@ void SystemClock_Config(void)
 
   /* SysTick_IRQn interrupt configuration */
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+}
+
+/* SPI2 init function */
+static void MX_SPI2_Init(void)
+{
+
+  hspi2.Instance = SPI2;
+  hspi2.Init.Mode = SPI_MODE_MASTER;
+  hspi2.Init.Direction = SPI_DIRECTION_2LINES;
+  hspi2.Init.DataSize = SPI_DATASIZE_8BIT;
+  hspi2.Init.CLKPolarity = SPI_POLARITY_HIGH;
+  hspi2.Init.CLKPhase = SPI_PHASE_2EDGE;
+  hspi2.Init.NSS = SPI_NSS_SOFT;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_2;
+  hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
+  hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
+  hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_ENABLE;
+  hspi2.Init.CRCPolynomial = 10;
+  if (HAL_SPI_Init(&hspi2) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
 }
 
 /* TIM2 init function */
@@ -267,6 +301,39 @@ static void MX_TIM3_Init(void)
 
 }
 
+/* TIM4 init function */
+static void MX_TIM4_Init(void)
+{
+
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim4.Instance = TIM4;
+  htim4.Init.Prescaler = 71;
+  htim4.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim4.Init.Period = 0;
+  htim4.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+  htim4.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+  if (HAL_TIM_Base_Init(&htim4) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim4, &sClockSourceConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim4, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /** Configure pins as 
         * Analog 
         * Input 
@@ -282,11 +349,22 @@ static void MX_GPIO_Init(void)
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
+  __HAL_RCC_GPIOG_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SPI_FLASH_CS_GPIO_Port, SPI_FLASH_CS_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SPI_NRF_CS_GPIO_Port, SPI_NRF_CS_Pin, GPIO_PIN_SET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(SPI_SD_CS_GPIO_Port, SPI_SD_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(OUTPUT_LED0_GPIO_Port, OUTPUT_LED0_Pin, GPIO_PIN_RESET);
@@ -294,20 +372,32 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : OUTPUT_LED1_Pin */
   GPIO_InitStruct.Pin = OUTPUT_LED1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(OUTPUT_LED1_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SPI_FLASH_CS_Pin OUTPUT_LED0_Pin */
+  GPIO_InitStruct.Pin = SPI_FLASH_CS_Pin|OUTPUT_LED0_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SPI_NRF_CS_Pin */
+  GPIO_InitStruct.Pin = SPI_NRF_CS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(SPI_NRF_CS_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : SPI_SD_CS_Pin */
+  GPIO_InitStruct.Pin = SPI_SD_CS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(SPI_SD_CS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pin : EXTI_LTC_Pin */
   GPIO_InitStruct.Pin = EXTI_LTC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(EXTI_LTC_GPIO_Port, &GPIO_InitStruct);
-
-  /*Configure GPIO pin : OUTPUT_LED0_Pin */
-  GPIO_InitStruct.Pin = OUTPUT_LED0_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-  HAL_GPIO_Init(OUTPUT_LED0_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
   HAL_NVIC_SetPriority(EXTI4_IRQn, 0, 0);
@@ -316,639 +406,7 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-//void ltc_run(unsigned char *data)
-//{
-//	static int frame = 0;
-//	static int second = 0;
-//	static int minute = 0;
-//	static int hour = 0;
-//	frame = (frame+1)%24;
-//	if (0 == frame)
-//	{
-//		second = (second+1)%60;
-//		if (0 == second)
-//		{
-//			minute = (minute+1)%60;
-//			if (0 == minute)
-//			{
-//				hour = (hour+1)%24;
-//			}
-//		}
-//	}
-//	data[0] = frame%10;
-//	data[1] = frame/10;
-//	data[2] = second%10;
-//	data[3] = second/10;
-//	data[4] = minute%10;
-//	data[5] = minute/10;
-//	data[6] = hour%10;
-//	data[7] = hour/10;
-//	data[8] = 0xfc;
-//	data[9] = 0xbf;
-//}
 
-//int jieduizhi(int a ,int b)
-//{
-//	if(a<b)
-//		return (b-a);
-//	else
-//		return (a-b);
-
-//}
-
-//void ltc_send(void)
-//{
-//	static int index_byte = 0;
-//	static int index_bit = 0;
-//	static int odd_even_flag = 0;
-//	static unsigned char data[10] = {0};
-//	
-//	data[8] = 0xfc;
-//	data[9] = 0xbf;
-//	  
-//	if (0 == odd_even_flag)
-//	{
-//		odd_even_flag = 1;
-//	}
-//	else
-//	{
-//		odd_even_flag = 0;
-//	}
-
-//	if (1 == odd_even_flag)
-//	{
-//		HAL_GPIO_TogglePin(OUTPUT_LED0_GPIO_Port, OUTPUT_LED0_Pin);
-//		io_ltc = !io_ltc;
-//		io_ltc_update = 1;
-//		index_bit = (index_bit+1)%8;
-//		if (0 == index_bit)
-//		{
-//			index_byte = (index_byte+1)%10;
-//			if (0 == index_byte)
-//			{
-//				//ltc_run(data);
-//			}
-//		}
-//	}
-//	else
-//	{
-//		if (0 == (data[index_byte]&(0x80>>index_bit)))
-//		{
-//			HAL_GPIO_TogglePin(OUTPUT_LED0_GPIO_Port, OUTPUT_LED0_Pin);
-//			io_ltc = !io_ltc;
-//			io_ltc_update = 1;
-//		}
-//	}
-//	
-//	if (io_ltc_update == 1)
-//	{
-//		io_ltc_update = 0;
-//		
-//	cur_timer2 = __HAL_TIM_GET_COUNTER(&htim3);
-//	if (cur_timer2 > pre_timer2)
-//	{
-//	  dif_timer2 = cur_timer2 - pre_timer2;
-//	}
-//	else
-//	{
-//	  dif_timer2 = cur_timer2+50000-pre_timer2;
-//	}
-//	max_timer2 = (max_timer2<dif_timer2)?dif_timer2:max_timer2;
-//	pre_timer2 = cur_timer2;
-//	
-//	ltc_update_time = dif_timer2;
-//	  
-//	  dif_timer3 = ltc_update_time;
-//	  
-//	  if (zishiying == 0)
-//	  {
-//		  ++ix;
-//		  if (ix > 80)
-//		  {
-//			  if ((20 < ooo_) && (20 < kkk_))
-//			  {
-//				  zishiying = 1;
-//				  return;
-//			  }
-//			  
-//			  if (shangci == 0)
-//			  {
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  count2 = jieduizhi(shiying[0], dif_timer3);
-//			  if (count2 < 10)
-//			  {
-//				  ++ooo_;
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  count2 = jieduizhi(shiying[2], dif_timer3);
-//			  if (count2 < 10)
-//			  {
-//				  ++kkk_;
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  
-//			  count2 = jieduizhi(dif_timer3, shangci);
-//			  if (count2 < 20)
-//			  {
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  
-//			  if (shangci < dif_timer3)
-//			  {
-//				  count2 = jieduizhi(shangci, count2);
-//				  if (count2 < 10)
-//				  {
-//					  shiying[0] = shangci;
-//					  shiying[2] = dif_timer3;
-//				  }
-//			  }
-//			  else
-//			  {
-//				  count2 = jieduizhi(dif_timer3, count2);
-//				  if (count2 < 10)
-//				  {
-//					  shiying[0] = dif_timer3;
-//					  shiying[2] = shangci;
-//				  }
-//			  }
-//			  
-//			  ooo_ = 0;
-//			  kkk_ = 0;
-//		  }
-//	  }
-//	  else
-//	  {
-//		count_flag = 1;
-//		if ((shiying[2]-80) < dif_timer3)
-//		{
-//			if (dif_timer3 < (shiying[2]+80))
-//			{
-//				count1 = 0;
-//			}
-//			else
-//			{
-//				count1 = 2;
-//			}
-//		}
-//		else if ((shiying[0]-80) < dif_timer3)
-//		{
-//			if (dif_timer3 < (shiying[0]+80))
-//			{
-//				count1 = 1;
-//			}
-//			else 
-//			{
-//				count1 = 2;
-//			}
-//	
-//		}
-//		else
-//		{
-//			count1 = 2;
-//		}
-
-//		if(count1==2)
-//		{
-//			ERR_++;
-//			if (ERR_ == 50)
-//			{
-//				ERR_ = 0;
-//				zishiying = 0;
-
-//			}
-//		}
-//	  }
-//	  
-//		if (count_flag == 1)
-//		{
-//			count_flag = 0;
-//			time2_count = count1;		
-//			if (time2_count == 0)
-//			{
-//				last_value = 0;
-//				time_count = 0;
-//			}
-//			else if (time2_count == 1)
-//			{
-//				time_count++;
-//				if (time_count == 2)
-//				{
-//				 	time_count = 0;
-//					last_value = 1;
-//				}
-//				else
-//				{
-//					return;
-//				}
-//			}
-//			else
-//			{
-//				; /* do nothing */
-//			}
-
-//			if (zhengok == 0)
-//			{	
-//				if (last_value == 1)
-//				{
-//					if (j != 12)
-//					{
-//						++j;
-//					}
-//					else
-//					{
-//						j = 0;
-//					}
-//					if (j == 14)
-//					{					
-//						j = 0;
-//						zhengok = 1;
-//					}
-//				}
-//				else
-//				{
-//					if (j == 12)
-//					{
-//						++j;
-//					}
-//					else
-//					{
-//						j = 0;
-//					}
-//				}
-//			}
-//			else
-//			{
-//			 	zuizon[zhengno]=last_value;
-				
-//				switch(zhengno)
-//				{
-//					case 3:
-//						UDPData_R[10] = zuizon[0]+(zuizon[1]<<1);
-//						UDPData_R[10] = UDPData_R[10]+(zuizon[2]<<2)+(zuizon[3]<<3);
-//						break;
-//					case 9:
-//						UDPData_R[9] =  zuizon[8]+(zuizon[9]<<1);
-//						break;
-//					case 19:
-//						UDPData_R[7] =  zuizon[16]+(zuizon[17]<<1)+(zuizon[18]<<2);
-//						UDPData_R[7] = 	UDPData_R[7]+(zuizon[19]<<3);
-//						break;
-//					case 26:
-//						UDPData_R[6] =  zuizon[24]+(zuizon[25]<<1)+(zuizon[26]<<2);
-//						UDPData_R[6] =  UDPData_R[6] ;
-//						break;
-//					case 35:
-//						UDPData_R[4] =  zuizon[32]+(zuizon[33]<<1)+(zuizon[34]<<2);
-//						UDPData_R[4] = 	UDPData_R[4]+(zuizon[35]<<3);
-//						break;
-//					case 42:
-//						UDPData_R[3] =  zuizon[40]+(zuizon[41]<<1)+(zuizon[42]<<2);
-//						UDPData_R[3] = 	UDPData_R[3];
-//						break;
-//					case 51:
-//						UDPData_R[1] =  zuizon[48]+(zuizon[49]<<1)+(zuizon[50]<<2);
-//						UDPData_R[1] = 	UDPData_R[1]+(zuizon[51]<<3);
-//						break;
-//					case 57:
-//						UDPData_R[0] =  zuizon[56]+(zuizon[57]<<1);
-//						UDPData_R[0] = 	UDPData_R[0];
-//						break;				
-//					case 63:
-//						break;							
-//					case 64:
-//						break;							
-//				}
-
-//				zhengno++;
-//				if (zhengno == 80)
-//				{
-//					for (k=0; k<10; k++)
-//					{
-//						rec_ltc_data[k] = 0;
-//						for (i=0; i<8; i++)
-//						{
-//							rec_ltc_data[k] += (zuizon[8*k+i]<<i);
-//						}
-//					}
-//					zhengno = 0;
-//					for (i=0; i<16; i++)
-//					{
-//						if (jiaozheng[i] != zuizon[64+i])
-//						{
-//							zhengok = 0;
-//						}
-
-//					}
-
-//					if (zhengok == 1)
-//					{
-//						LED_Count ++ ;
-//						if (10 < LED_Count)
-//						{
-//							LED_Count = 0;
-//							if(LED_Flag == 0)
-//							{
-//								LED_Flag = 1;
-//								HAL_GPIO_WritePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin, GPIO_PIN_RESET);
-//							}
-//							else
-//							{
-//								LED_Flag = 0;
-//								HAL_GPIO_WritePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin, GPIO_PIN_SET);
-//							}  
-//						}
-//					}
-//				}			
-//			}
-//		}
-//	}
-//}
-
-/**
-  * @brief  EXTI line detection callbacks.
-  * @param  GPIO_Pin: Specifies the pins connected EXTI line
-  * @retval None
-  */
-//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
-//{
-//  if(EXTI_LTC_Pin == GPIO_Pin)
-//  {
-//	  if (timer3_enable == 0)
-//	  {
-//		  max_timer3 = 0;
-//		  cur_timer3 = 0;
-//		  pre_timer3 = 0;
-//		  return;
-//	  }
-//	  
-//	  cur_timer3 = __HAL_TIM_GET_COUNTER(&htim3);
-//	  dif_timer3 = cur_timer3 - pre_timer3;
-//	  if (dif_timer3 < 0)
-//	  {
-//		  dif_timer3+=50000;
-//	  }
-//	  pre_timer3 = cur_timer3;
-//	  
-//	  if (zishiying == 0)
-//	  {
-//		  ++ix;
-//		  if (ix > 80)
-//		  {
-//			  if ((20 < ooo_) && (20 < kkk_))
-//			  {
-//				  zishiying = 1;
-//				  return;
-//			  }
-//			  
-//			  if (shangci == 0)
-//			  {
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  count2 = jieduizhi(shiying[0], dif_timer3);
-//			  if (count2 < 10)
-//			  {
-//				  ++ooo_;
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  count2 = jieduizhi(shiying[2], dif_timer3);
-//			  if (count2 < 10)
-//			  {
-//				  ++kkk_;
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  
-//			  count2 = jieduizhi(dif_timer3, shangci);
-//			  if (count2 < 20)
-//			  {
-//				  shangci = dif_timer3;
-//				  return;
-//			  }
-//			  
-//			  if (shangci < dif_timer3)
-//			  {
-//				  count2 = jieduizhi(shangci, count2);
-//				  if (count2 < 10)
-//				  {
-//					  shiying[0] = shangci;
-//					  shiying[2] = dif_timer3;
-//				  }
-//			  }
-//			  else
-//			  {
-//				  count2 = jieduizhi(dif_timer3, count2);
-//				  if (count2 < 10)
-//				  {
-//					  shiying[0] = dif_timer3;
-//					  shiying[2] = shangci;
-//				  }
-//			  }
-//			  
-//			  ooo_ = 0;
-//			  kkk_ = 0;
-//		  }
-//	  }
-//	  else
-//	  {
-//		count_flag = 1;
-//		if ((shiying[2]-80) < dif_timer3)
-//		{
-//			if (dif_timer3 < (shiying[2]+80))
-//			{
-//				count1 = 0;
-//			}
-//			else
-//			{
-//				count1 = 2;
-//			}
-//		}
-//		else if ((shiying[0]-80) < dif_timer3)
-//		{
-//			if (dif_timer3 < (shiying[0]+80))
-//			{
-//				count1 = 1;
-//			}
-//			else 
-//			{
-//				count1 = 2;
-//			}
-//	
-//		}
-//		else
-//		{
-//			count1 = 2;
-//		}
-
-//		if(count1==2)
-//		{
-//			ERR_++;
-//			if (ERR_ == 50)
-//			{
-//				ERR_ = 0;
-//				zishiying = 0;
-
-//			}
-//		}
-//	  }
-//	  
-//		if (count_flag == 1)
-//		{
-//			count_flag = 0;
-//			time2_count = count1;		
-//			if (time2_count == 0)
-//			{
-//				last_value = 0;
-//				time_count = 0;
-//			}
-//			else if (time2_count == 1)
-//			{
-//				time_count++;
-//				if (time_count == 2)
-//				{
-//				 	time_count = 0;
-//					last_value = 1;
-//				}
-//				else
-//				{
-//					return;
-//				}
-//			}
-//			else
-//			{
-//				; /* do nothing */
-//			}
-
-//			if (zhengok == 0)
-//			{	
-//				if (last_value == 1)
-//				{
-//					if (j != 12)
-//					{
-//						++j;
-//					}
-//					else
-//					{
-//						j = 0;
-//					}
-//					if (j == 14)
-//					{					
-//						j = 0;
-//						zhengok = 1;
-//					}
-//				}
-//				else
-//				{
-//					if (j == 12)
-//					{
-//						++j;
-//					}
-//					else
-//					{
-//						j = 0;
-//					}
-//				}
-//			}
-//			else
-//			{
-//			 	zuizon[zhengno]=last_value;
-//				
-////				switch(zhengno)
-////				{
-////					case 3:
-////						UDPData_R[10] = zuizon[0]+(zuizon[1]<<1);
-////						UDPData_R[10] = UDPData_R[10]+(zuizon[2]<<2)+(zuizon[3]<<3);
-////						break;
-////					case 9:
-////						UDPData_R[9] =  zuizon[8]+(zuizon[9]<<1);
-////						break;
-////					case 19:
-////						UDPData_R[7] =  zuizon[16]+(zuizon[17]<<1)+(zuizon[18]<<2);
-////						UDPData_R[7] = 	UDPData_R[7]+(zuizon[19]<<3);
-////						break;
-////					case 26:
-////						UDPData_R[6] =  zuizon[24]+(zuizon[25]<<1)+(zuizon[26]<<2);
-////						UDPData_R[6] =  UDPData_R[6] ;
-////						break;
-////					case 35:
-////						UDPData_R[4] =  zuizon[32]+(zuizon[33]<<1)+(zuizon[34]<<2);
-////						UDPData_R[4] = 	UDPData_R[4]+(zuizon[35]<<3);
-////						break;
-////					case 42:
-////						UDPData_R[3] =  zuizon[40]+(zuizon[41]<<1)+(zuizon[42]<<2);
-////						UDPData_R[3] = 	UDPData_R[3];
-////						break;
-////					case 51:
-////						UDPData_R[1] =  zuizon[48]+(zuizon[49]<<1)+(zuizon[50]<<2);
-////						UDPData_R[1] = 	UDPData_R[1]+(zuizon[51]<<3);
-////						break;
-////					case 57:
-////						UDPData_R[0] =  zuizon[56]+(zuizon[57]<<1);
-////						UDPData_R[0] = 	UDPData_R[0];
-////						break;				
-////					case 63:
-////						break;							
-////					case 64:
-////						break;							
-////				}
-
-//				zhengno++;
-//				if (zhengno == 80)
-//				{
-//					for (k=0; k<10; k++)
-//					{
-//						rec_ltc_data[k] = 0;
-//						for (i=0; i<8; i++)
-//						{
-//							rec_ltc_data[k] += (zuizon[8*k+i]<<i);
-//						}
-//					}
-//					zhengno = 0;
-////					for (i=0; i<16; i++)
-////					{
-////						if (jiaozheng[i] != zuizon[64+i])
-////						{
-////							zhengok = 0;
-////						}
-
-////					}
-
-//					if (zhengok == 1)
-//					{
-//						LED_Count ++ ;
-//						if (10 < LED_Count)
-//						{
-//							LED_Count = 0;
-//							if(LED_Flag == 0)
-//							{
-//								LED_Flag = 1;
-//								HAL_GPIO_WritePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin, GPIO_PIN_RESET);
-//							}
-//							else
-//							{
-//								LED_Flag = 0;
-//								HAL_GPIO_WritePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin, GPIO_PIN_SET);
-//							}  
-//						}
-//					}
-//				}			
-//			}
-//		}
-//  }
-//}
-
-//void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
-//{
-//  if (htim->Instance == TIM2) {
-//    ltc_send();
-//  }
-//}
 /* USER CODE END 4 */
 
 /**
