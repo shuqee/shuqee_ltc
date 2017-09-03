@@ -45,6 +45,7 @@
 #include "user_time.h"
 #include "user_spi.h"
 #include "spi_flash.h"
+#include "spi_lcd.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -57,45 +58,7 @@ TIM_HandleTypeDef htim4;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
-//int timer3_enable = 0;
-//int io_ltc = 0;
-//int io_ltc_update = 0;
-//int ltc_update_time = 0;
-//int rec_ltc_data[10] = {0};
 
-//int max_timer3 = 0;
-//int cur_timer3 = 0;
-//int pre_timer3 = 0;
-//int dif_timer3 = 0;
-
-//int max_timer2 = 0;
-//int cur_timer2 = 0;
-//int pre_timer2 = 0;
-//int dif_timer2 = 0;
-
-//int display = 0;
-//int count_flag = 0;
-
-//int count1=0,count2=0;
-//int count0=0;
-//int ix = 0;
-//int zishiying = 0;
-//int shangci = 0;
-//int shiying[10] = {0};
-//int ooo_=0,	kkk_=0;
-//int ERR_=0;
-
-//int last_value=0,j=0,k=0;
-//int time2_count = 0 ,time_count=0;
-//int zhengok = 0;
-//int zuizon[100];
-//int zhengno=0;
-//int jiaozheng[16]={0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,1};
-//int i=0;
-//int LED_Count = 0,LED_Flag = 0;
-//int LED_Power=5000;
-//int Pswd[20]={0x00};
-//int UDPData_R[13]={0X00};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -152,6 +115,7 @@ int main(void)
 	user_spi_init();
 	spi_flash_init();
 	user_time_init();
+	spi_lcd_init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -161,7 +125,7 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
+	lcd_test();
   }
   /* USER CODE END 3 */
 
@@ -385,13 +349,13 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(SPI_VS_CS_GPIO_Port, SPI_VS_CS_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(SPI_VS_CS_GPIO_Port, SPI_VS_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, OUTPUT_TFT_BL_Pin|SPI_TFT_CS_Pin|OUTPUT_TFT_DC_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, OUTPUT_LCD_BL_Pin|SPI_LCD_CS_Pin|OUTPUT_LCD_DC_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(OUTPUT_TFT_RES_GPIO_Port, OUTPUT_TFT_RES_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(OUTPUT_LCD_RES_GPIO_Port, OUTPUT_LCD_RES_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(SPI_FLASH_CS_GPIO_Port, SPI_FLASH_CS_Pin, GPIO_PIN_SET);
@@ -414,20 +378,20 @@ static void MX_GPIO_Init(void)
   /*Configure GPIO pin : SPI_VS_CS_Pin */
   GPIO_InitStruct.Pin = SPI_VS_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(SPI_VS_CS_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : OUTPUT_TFT_BL_Pin SPI_TFT_CS_Pin OUTPUT_TFT_DC_Pin */
-  GPIO_InitStruct.Pin = OUTPUT_TFT_BL_Pin|SPI_TFT_CS_Pin|OUTPUT_TFT_DC_Pin;
+  /*Configure GPIO pins : OUTPUT_LCD_BL_Pin SPI_LCD_CS_Pin OUTPUT_LCD_DC_Pin */
+  GPIO_InitStruct.Pin = OUTPUT_LCD_BL_Pin|SPI_LCD_CS_Pin|OUTPUT_LCD_DC_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : OUTPUT_TFT_RES_Pin */
-  GPIO_InitStruct.Pin = OUTPUT_TFT_RES_Pin;
+  /*Configure GPIO pin : OUTPUT_LCD_RES_Pin */
+  GPIO_InitStruct.Pin = OUTPUT_LCD_RES_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(OUTPUT_TFT_RES_GPIO_Port, &GPIO_InitStruct);
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+  HAL_GPIO_Init(OUTPUT_LCD_RES_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : SPI_FLASH_CS_Pin OUTPUT_LED0_Pin */
   GPIO_InitStruct.Pin = SPI_FLASH_CS_Pin|OUTPUT_LED0_Pin;

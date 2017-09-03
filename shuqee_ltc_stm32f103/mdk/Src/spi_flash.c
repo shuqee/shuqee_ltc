@@ -39,16 +39,11 @@ uint16_t spi_flash_type = W25Q64;//默认就是25Q64
 
 void spi_flash_init(void)
 {	
-	uint8_t i;
 	spi_flash_type = spi_flash_read_id();//读取FLASH ID.  
 	while(spi_flash_read_id()!=W25Q64)							//检测不到W25Q64
 	{
 		delay_ms(100);
 		LED_TOGGLE();
-	}
-	for(i=0;i<60;i++)
-	{
-		spi_flash_read(&i,i,1);
 	}
 } 
 

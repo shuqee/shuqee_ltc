@@ -34,6 +34,25 @@ void user_io_init(void)
 	static uint8_t second = 0;
 	static uint8_t minute = 0;
 	static uint8_t hour = 0;
+	
+uint8_t get_ltc_frame(void)
+{
+	return frame;
+}
+
+uint8_t get_ltc_second(void)
+{
+	return second;
+}
+
+uint8_t get_ltc_minute(void)
+{
+	return minute;
+}
+uint8_t get_ltc_hour(void)
+{
+	return hour;
+}
 
 void ltc_decode(int interval)
 {	
@@ -213,10 +232,7 @@ void ltc_decode(int interval)
 				frame = ((ltc_receive_data[1]&0x03)*10)+(ltc_receive_data[0]&0x0f);
 				second = ((ltc_receive_data[3]&0x07)*10)+(ltc_receive_data[2]&0x0f);
 				minute = ((ltc_receive_data[5]&0x07)*10)+(ltc_receive_data[4]&0x0f);
-				//hour = ((ltc_receive_data[7]&0x03)*10)+(ltc_receive_data[6]&0x0f);
-
-				/* for debug */
-				spi_flash_read(&hour, second, 1);
+				hour = ((ltc_receive_data[7]&0x03)*10)+(ltc_receive_data[6]&0x0f);
 				
 				if ((ltc_receive_data[8] != 0xfc) ||
 					(ltc_receive_data[9] != 0xbf))
