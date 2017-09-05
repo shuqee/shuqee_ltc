@@ -38,11 +38,17 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "stm32f4xx_hal.h"
+#include "dma.h"
 #include "spi.h"
+#include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
 #include "QDTFT_demo.h"
+#include "user_time.h"
+#include "user_io.h"
+#include "Lcd_Driver.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -89,10 +95,18 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_SPI1_Init();
+  MX_TIM3_Init();
+  MX_USART2_UART_Init();
 
   /* USER CODE BEGIN 2 */
- 
+  user_time_init();
+	Lcd_Init();
+	LCD_LED_SET;//通过IO控制背光亮		
+  Lcd_Clear(GRAY0);	
+	HAL_GPIO_WritePin(SP_485_RE_GPIO_Port,SP_485_RE_Pin,GPIO_PIN_SET);
+	HAL_UART_Transmit_DMA(&huart2,(uint8_t *)flim_ation_temp_buf,sizeof(flim_ation_temp_buf));
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,7 +117,12 @@ int main(void)
 
   /* USER CODE BEGIN 3 */
    QDTFT_Test_Demo();
-	 HAL_Delay(60000);
+	if(judge_tochange==1)
+	 {
+		   com_sp485();
+		 judge_tochange=0;
+	 }		 
+//	 HAL_Delay(60000);
   }
   /* USER CODE END 3 */
 

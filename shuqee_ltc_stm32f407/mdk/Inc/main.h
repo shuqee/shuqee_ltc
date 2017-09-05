@@ -54,8 +54,13 @@
 #define TFT_BL_GPIO_Port GPIOE
 #define TLT_DS_Pin GPIO_PIN_5
 #define TLT_DS_GPIO_Port GPIOE
+#define LTC_INPUT_Pin GPIO_PIN_6
+#define LTC_INPUT_GPIO_Port GPIOE
+#define LTC_INPUT_EXTI_IRQn EXTI9_5_IRQn
 #define LED0_Pin GPIO_PIN_9
 #define LED0_GPIO_Port GPIOF
+#define SP_485_RE_Pin GPIO_PIN_8
+#define SP_485_RE_GPIO_Port GPIOG
 
 /* USER CODE BEGIN Private defines */
 

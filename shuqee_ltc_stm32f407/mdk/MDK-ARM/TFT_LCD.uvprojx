@@ -171,11 +171,11 @@
             <RunIndependent>0</RunIndependent>
             <UpdateFlashBeforeDebugging>1</UpdateFlashBeforeDebugging>
             <Capability>1</Capability>
-            <DriverSelection>4107</DriverSelection>
+            <DriverSelection>4103</DriverSelection>
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>STLink\ST-LINKIII-KEIL_SWO.dll</Flash2>
-          <Flash3></Flash3>
+          <Flash3>"" ()</Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -365,7 +365,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F407xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;  ../Drivers/STM32F4xx_HAL_Driver/Inc;  ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;  ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;  ../Drivers/CMSIS/Include;  ..\..\user</IncludePath>
+              <IncludePath>../Inc;     ../Drivers/STM32F4xx_HAL_Driver/Inc;     ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy;     ../Drivers/CMSIS/Device/ST/STM32F4xx/Include;     ../Drivers/CMSIS/Include;     ..\Inc;     ..\user</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -483,6 +483,11 @@
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f4xx_hal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -517,24 +522,49 @@
               <FilePath>../Src/stm32f4xx_it.c</FilePath>
             </File>
             <File>
+              <FileName>tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\user_io.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\user_time.c</FilePath>
+            </File>
+            <File>
               <FileName>delay.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\user\delay.c</FilePath>
+              <FilePath>..\user\delay.c</FilePath>
             </File>
             <File>
               <FileName>GUI.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\user\GUI.c</FilePath>
+              <FilePath>..\user\GUI.c</FilePath>
             </File>
             <File>
               <FileName>Lcd_Driver.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\user\Lcd_Driver.c</FilePath>
+              <FilePath>..\user\Lcd_Driver.c</FilePath>
             </File>
             <File>
               <FileName>QDTFT_demo.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\user\QDTFT_demo.c</FilePath>
+              <FilePath>..\user\QDTFT_demo.c</FilePath>
+            </File>
+            <File>
+              <FileName>dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Src/usart.c</FilePath>
             </File>
           </Files>
         </Group>

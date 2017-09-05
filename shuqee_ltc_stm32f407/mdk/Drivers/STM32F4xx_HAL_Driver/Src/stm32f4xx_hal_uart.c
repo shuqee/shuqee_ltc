@@ -2005,7 +2005,14 @@ static void UART_DMATransmitCplt(DMA_HandleTypeDef *hdma)
 
     /* Enable the UART Transmit Complete Interrupt */
     SET_BIT(huart->Instance->CR1, USART_CR1_TCIE);
-
+   if(huart->gState==HAL_UART_STATE_BUSY_TX_RX)
+	 {
+		  huart->gState=HAL_UART_STATE_BUSY_RX;
+	 }
+	 else
+	 {
+		  huart->gState=HAL_UART_STATE_READY;
+	 }
   }
   /* DMA Circular mode */
   else
