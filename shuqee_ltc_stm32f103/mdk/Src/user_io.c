@@ -79,14 +79,32 @@ void ltc_decode(int interval)
 			{
 				++short_interval_count;
 				interval_last = interval;
+				error_count = 0;
 				return;
+			}
+			else
+			{
+				error_count++;
 			}
 
 			if (ABS(adaption_long_interval-interval) < 10)
 			{
 				++long_interval_count;
 				interval_last = interval;
+				error_count = 0;
 				return;
+			}
+			else
+			{
+				error_count++;
+			}
+			
+			if (error_count > 100)
+			{
+				error_count = 0;
+				interval_last = 0;
+				return;
+				
 			}
 
 			if (ABS(interval-interval_last) < 20)
