@@ -896,6 +896,61 @@
               <FileType>1</FileType>
               <FilePath>../Src/main.c</FilePath>
             </File>
+            <File>
+              <FileName>app_ethernet.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\app_ethernet.c</FilePath>
+            </File>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\modbus_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus_udp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\modbus_udp.c</FilePath>
+            </File>
+            <File>
+              <FileName>spi_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\spi_lcd.c</FilePath>
+            </File>
+            <File>
+              <FileName>udp_echoclient.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\udp_echoclient.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\user_flash.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\user_io.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\user_spi.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_time.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\user_time.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\user_uart.c</FilePath>
+            </File>
           </Files>
         </Group>
       </Groups>
