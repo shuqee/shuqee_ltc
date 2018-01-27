@@ -52,7 +52,14 @@
 #include "lwip.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "user_config.h"
+#include "user_io.h"
+#include "user_time.h"
+#include "user_uart.h"
+#include "user_spi.h"
+#include "spi_lcd.h"
+#include "app_ethernet.h"
+#include "udp_echoclient.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -123,7 +130,13 @@ int main(void)
   MX_TIM3_Init();
 
   /* USER CODE BEGIN 2 */
-
+  user_io_init();
+  user_uart_init();
+  user_spi_init();
+  user_time_init();
+  spi_lcd_init();
+  udp_echoclient_connect();
+  User_notification(&gnetif);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -133,7 +146,7 @@ int main(void)
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
-
+	MX_LWIP_Process();
   }
   /* USER CODE END 3 */
 

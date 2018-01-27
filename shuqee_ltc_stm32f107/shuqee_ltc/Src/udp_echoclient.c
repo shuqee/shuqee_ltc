@@ -54,6 +54,7 @@
 #include "spi_lcd.h"
 #include "modbus_udp.h"
 #include "user_time.h"
+#include "user_io.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -88,17 +89,16 @@ void udp_server_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p
 
 	if (!(upcb_client->flags & UDP_FLAGS_CONNECTED))
 	{
-		/* Connect to the remote client */
-		udp_connect(upcb_client, addr, port);
-		LCD_UsrLog ("UdpConnectComplete\n");
-	}
-
-	data_len = mb_rsp((uint8_t *)(p->payload), (uint16_t)(p->len), udp_send_buf);
-	if (data_len != 0)
-	{
-		udp_send_active_flag = 1;
-		udp_client_send(udp_send_buf, data_len);
-		user_time_start();
+		data_len = mb_rsp_connect((uint8_t *)(p->payload), (uint16_t)(p->len), udp_send_buf);
+		if (data_len != 0)
+		{
+			udp_send_active_flag = 1;
+			/* Connect to the remote client */
+			udp_connect(upcb_client, addr, port);
+			udp_client_send(udp_send_buf, data_len);
+			LCD_UsrLog ("UdpConnectComplete\n");
+			user_time_start();
+		}
 	}
 
 	/* Free receive pbuf */
@@ -164,12 +164,26 @@ void udp_echoclient_send(void)
 	
 	if (get_timer2_isr_flag() == 1)
 	{
+		clr_timer2_isr_flag();
+		modbus_bus485_task();
+	}
+	
+	if (get_ltc_frame_update_event() == 1)
+	{
+		clr_ltc_frame_update_event();
+#ifdef USE_DHCP
+		if ((!(upcb_client->flags & UDP_FLAGS_CONNECTED)) ||
+			((DHCP_state != DHCP_ADDRESS_ASSIGNED) &&
+			 (DHCP_state != DHCP_TIMEOUT)))
+#else
+		if (!(upcb_client->flags & UDP_FLAGS_CONNECTED))
+#endif
+		{
+			return;
+		}
 		data_len = send_ltc(udp_send_buf);
 		udp_client_send(udp_send_buf, data_len);
-		modbus_bus485_task();
 		HAL_GPIO_TogglePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin);
-		
-		clr_timer2_isr_flag();
 	}
 	
 	/* Fine DHCP periodic process every 500ms */

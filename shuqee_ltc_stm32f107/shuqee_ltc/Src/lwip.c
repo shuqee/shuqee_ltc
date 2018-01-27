@@ -77,7 +77,8 @@ ip4_addr_t netmask;
 ip4_addr_t gw;
 
 /* USER CODE BEGIN 2 */
-
+#include "app_ethernet.h"
+#include "udp_echoclient.h"
 /* USER CODE END 2 */
 
 /**
@@ -153,6 +154,12 @@ void MX_LWIP_Process(void)
   sys_check_timeouts();
 
 /* USER CODE BEGIN 4_3 */
+#ifdef USE_DHCP
+	ethernetif_set_link(&gnetif);
+  /* handle periodic timers for LwIP */
+  DHCP_Periodic_Handle(&gnetif);
+#endif
+	udp_echoclient_send();
 /* USER CODE END 4_3 */
 }
 

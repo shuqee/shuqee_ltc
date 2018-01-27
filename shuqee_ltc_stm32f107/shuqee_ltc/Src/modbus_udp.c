@@ -4,6 +4,7 @@
 #include "user_flash.h"
 #include "spi_lcd.h"
 #include "user_uart.h"
+#include "user_io.h"
 #include "stdio.h"
 #include <string.h>
 #include <stdarg.h>
@@ -128,9 +129,9 @@ uint16_t mb_req_pc_connect(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_connect.password);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -146,9 +147,9 @@ uint16_t mb_req_pc_monitor(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_monitor.tick);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -167,9 +168,9 @@ uint16_t mb_req_pc_read_ram(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_read_ram.len);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -191,9 +192,9 @@ uint16_t mb_req_pc_write_ram(uint8_t *send_buf)
 	len += pc_send_write_ram_len;
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -212,9 +213,9 @@ uint16_t mb_req_pc_read_flash(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_read_flash.len);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -236,9 +237,9 @@ uint16_t mb_req_pc_write_flash(uint8_t *send_buf)
 	len += pc_send_write_flash_len;
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -259,9 +260,9 @@ uint16_t mb_rsp_mcu_read(uint8_t *send_buf)
 	len += pc_receive_read_len;
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -281,9 +282,9 @@ uint16_t mb_rsp_mcu_write(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.mcu_write.len);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -301,9 +302,9 @@ uint16_t mb_rsp_pc_connect(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_connect.password);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -319,9 +320,9 @@ uint16_t mb_rsp_pc_monitor(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_monitor.tick);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -342,9 +343,9 @@ uint16_t mb_rsp_pc_read_ram(uint8_t *send_buf)
 	len += mcu_receive_read_ram_len;
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -363,9 +364,9 @@ uint16_t mb_rsp_pc_write_ram(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_write_ram.len);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -389,9 +390,9 @@ uint16_t mb_rsp_pc_read_flash(uint8_t *send_buf)
 	len += mcu_receive_read_flash_len;
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -410,9 +411,9 @@ uint16_t mb_rsp_pc_write_flash(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_write_flash.len);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -449,9 +450,9 @@ uint16_t mb_rsp_pc_read_info(uint8_t *send_buf)
 	len += mcu_receive_read_info_len;
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -470,9 +471,9 @@ uint16_t mb_req_mcu_read(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.mcu_read.len);
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -494,9 +495,9 @@ uint16_t mb_req_mcu_write(uint8_t *send_buf)
 	len += mcu_send_write_len;
 	adu.crc = crc16((uint8_t *)&adu, len);
 	memcpy(send_buf, (uint8_t *)&adu, len);
-	send_buf[len] = (uint8_t)(adu.crc >> 8);
-	len += 1;
 	send_buf[len] = (uint8_t)(adu.crc);
+	len += 1;
+	send_buf[len] = (uint8_t)(adu.crc >> 8);
 	len += 1;
 	return len;
 }
@@ -524,10 +525,15 @@ uint16_t send_ltc(uint8_t *send_buf)
 	
 	mcu_send_write_addr = 0;
 	mcu_send_write_len = 4;
-	mcu_send_write_data[0] = hour;
-	mcu_send_write_data[1] = minute;
-	mcu_send_write_data[2] = second;
-	mcu_send_write_data[3] = frame;
+
+//	mcu_send_write_data[0] = hour;
+//	mcu_send_write_data[1] = minute;
+//	mcu_send_write_data[2] = second;
+//	mcu_send_write_data[3] = frame;
+	mcu_send_write_data[0] = get_ltc_hour();
+	mcu_send_write_data[1] = get_ltc_minute();
+	mcu_send_write_data[2] = get_ltc_second();
+	mcu_send_write_data[3] = get_ltc_frame();
 	
 	return mb_req_mcu_write(send_buf);
 }
@@ -540,14 +546,14 @@ uint8_t check_crc(uint8_t *adu, uint16_t len)
 	{
 		if (len >= 2)
 		{
-			crc16_value = (uint16_t)(adu[len - 2] << 8 | adu[len - 1]);
+			crc16_value = (uint16_t)(adu[len - 2] | adu[len - 1] << 8);
 			if (crc16_value == crc16(adu, (len - 2)))
 			{
 				return 1;
 			}
 		}
 	}
-	return 1;
+	return 0;
 }
 
 uint8_t get_address(uint8_t *adu, uint16_t len)
@@ -679,9 +685,42 @@ uint8_t get_monitor_tick(uint8_t *adu, uint16_t len)
 		if (len == 5)
 		{
 			get_data(adu, len, data);
-			return data[0];
+			mcu_receive_monitor_tick = data[0];
+			return 1;
 		}
 	}
+	return 0;
+}
+
+uint16_t mb_rsp_connect(uint8_t *adu, uint16_t len, uint8_t *out)
+{	
+	uint8_t address;
+	uint8_t function_code;
+	
+	if (check_crc(adu, len) != 0)
+	{
+		address = get_address(adu, len);
+		switch (address)
+		{
+			case id_reserve:
+				function_code = get_funcode(adu, len);
+				switch (function_code)
+				{
+					case funcode_pc_connect:
+						if (get_password(adu, len) == BigLittleSwap32(123))
+						{
+							return mb_rsp_pc_connect(out);
+						}
+						break;
+					default :
+						break;
+				}
+				break;
+			default :
+				break;
+		}
+	}
+	
 	return 0;
 }
 
@@ -713,13 +752,11 @@ uint16_t mb_rsp(uint8_t *adu, uint16_t len, uint8_t *out)
 				function_code = get_funcode(adu, len);
 				switch (function_code)
 				{
-					case funcode_pc_connect:
-						if (get_password(adu, len) == BigLittleSwap32(123))
-						{
-							return mb_rsp_pc_connect(out);
-						}
-						break;
 					case funcode_pc_monitor:
+						if (get_monitor_tick(adu, len))
+						{
+							return mb_rsp_pc_monitor(out);
+						}
 						break;
 					case funcode_pc_read_ram:
 						if (get_read_ram_cmd(adu, len))

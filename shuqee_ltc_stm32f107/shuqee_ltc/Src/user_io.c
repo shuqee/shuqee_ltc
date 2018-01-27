@@ -35,23 +35,46 @@ void user_io_init(void)
 	static uint8_t minute = 0;
 	static uint8_t hour = 0;
 	
+	static uint8_t ltc_frame_update_event = 0;
+	
 uint8_t get_ltc_frame(void)
 {
-	return frame;
+	uint8_t ret_frame = 0;
+	SAFE(ret_frame = frame);
+	return ret_frame;
 }
 
 uint8_t get_ltc_second(void)
 {
-	return second;
+	uint8_t ret_second = 0;
+	SAFE(ret_second = second);
+	return ret_second;
 }
 
 uint8_t get_ltc_minute(void)
 {
-	return minute;
+	uint8_t ret_minute = 0;
+	SAFE(ret_minute = minute);
+	return ret_minute;
 }
+
 uint8_t get_ltc_hour(void)
 {
-	return hour;
+	uint8_t ret_hour = 0;
+	SAFE(ret_hour = hour);
+	return ret_hour;
+}
+
+uint8_t get_ltc_frame_update_event(void)
+{
+	uint8_t update_event = 0;
+	SAFE(update_event = ltc_frame_update_event);
+	return update_event;
+}
+
+void clr_ltc_frame_update_event(void)
+{
+	SAFE(ltc_frame_update_event = 0);
 }
 
 void ltc_decode(int interval)
@@ -257,6 +280,10 @@ void ltc_decode(int interval)
 				{
 					ltc_frame_flag = 0;
 				}
+				else
+				{
+					ltc_frame_update_event = 1;
+				}		
 
 				if (ltc_frame_flag == 1)
 				{

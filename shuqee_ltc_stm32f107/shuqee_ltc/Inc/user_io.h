@@ -1,6 +1,8 @@
 #ifndef __USER_IO_H
 #define __USER_IO_H
 
+#include "stm32f1xx_hal.h"
+
 #define LED1_TOGGLE() HAL_GPIO_TogglePin(OUTPUT_LED1_GPIO_Port, OUTPUT_LED1_Pin)
 #define LED2_TOGGLE() HAL_GPIO_TogglePin(OUTPUT_LED2_GPIO_Port, OUTPUT_LED2_Pin)
 #define LED3_TOGGLE() HAL_GPIO_TogglePin(OUTPUT_LED3_GPIO_Port, OUTPUT_LED3_Pin)
@@ -31,5 +33,12 @@
 #define LCD_LED_SET() OUTPUT_LCD_BL(1)
 
 extern void user_io_init(void);
+
+uint8_t get_ltc_frame(void);
+uint8_t get_ltc_second(void);
+uint8_t get_ltc_minute(void);
+uint8_t get_ltc_hour(void);
+uint8_t get_ltc_frame_update_event(void);
+void clr_ltc_frame_update_event(void);
 
 #endif /* __USER_IO_H */
