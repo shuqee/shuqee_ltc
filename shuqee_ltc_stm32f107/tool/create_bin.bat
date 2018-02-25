@@ -1,0 +1,1 @@
+C:\Keil_v5\ARM\ARMCC\bin\fromelf.exe --bin -o ..\shuqee_ltc\MDK-ARM\udp_demo\app.bin ..\shuqee_ltc\MDK-ARM\udp_demo\udp_demo.axf

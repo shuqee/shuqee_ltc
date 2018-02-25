@@ -60,6 +60,7 @@
 #include "spi_lcd.h"
 #include "app_ethernet.h"
 #include "udp_echoclient.h"
+#include "flash_map.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -100,7 +101,7 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  SCB->VTOR = USER_FLASH_APP_BASE;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/

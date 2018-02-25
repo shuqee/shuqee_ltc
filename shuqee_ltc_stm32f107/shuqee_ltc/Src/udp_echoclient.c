@@ -166,6 +166,7 @@ void udp_echoclient_send(void)
 	{
 		clr_timer2_isr_flag();
 		modbus_bus485_task();
+		modbus_switch_function_task();
 	}
 	
 	if (get_ltc_frame_update_event() == 1)

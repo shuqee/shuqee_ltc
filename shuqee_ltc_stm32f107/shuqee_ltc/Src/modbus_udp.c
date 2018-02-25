@@ -5,6 +5,7 @@
 #include "spi_lcd.h"
 #include "user_uart.h"
 #include "user_io.h"
+#include "user_boot.h"
 #include "stdio.h"
 #include <string.h>
 #include <stdarg.h>
@@ -41,6 +42,17 @@ enum modbus_address_id
 };
 
 #pragma pack(1)
+
+typedef struct
+{
+	uint8_t high[6];
+	uint8_t reserve_0[2];
+	uint8_t sp_seat;
+	uint8_t sp_env;
+	uint8_t reserve_1[6];
+	uint8_t reserve_2[255-16];
+	uint8_t switch_function;
+} ram_t;
 
 typedef union pdu_data
 {
@@ -116,6 +128,8 @@ uint8_t modbus_buf[1024] = {0};
 uint8_t shared_memory_ram[1024] = {0};
 uint8_t shared_memory_flash[1024] = {0};
 uint8_t shared_memory_pc[1024] = {0};
+
+ram_t *ram = (ram_t *)shared_memory_ram;
 
 #ifdef __PC_MODBUS_
 uint16_t mb_req_pc_connect(uint8_t *send_buf)
@@ -383,7 +397,7 @@ uint16_t mb_rsp_pc_read_flash(uint8_t *send_buf)
 	len += sizeof(adu.pdu.data.pc_read_flash.addr);
 	adu.pdu.data.pc_read_flash.len = BigLittleSwap16(mcu_receive_read_flash_len);
 	len += sizeof(adu.pdu.data.pc_read_flash.len);
-	user_flash_read(mcu_receive_read_flash_addr,
+	user_flash_read(mcu_receive_read_flash_addr+USER_FLASH_APP_DATA_BASE,
 	                mcu_receive_read_flash_len,
 	                adu.pdu.data.pc_read_flash.data);
 	//memcpy(adu.pdu.data.pc_read_flash.data, &shared_memory_flash[mcu_receive_read_flash_addr], mcu_receive_read_flash_len);
@@ -628,7 +642,6 @@ uint8_t get_write_ram_cmd(uint8_t *adu, uint16_t len)
 	mcu_receive_write_ram_addr = write_addr;
 	mcu_receive_write_ram_len = write_len;
 	memcpy(&shared_memory_ram[mcu_receive_write_ram_addr], &data[4], mcu_receive_write_ram_len);
-	
 	return 1;
 }
 
@@ -659,7 +672,7 @@ uint8_t get_write_flash_cmd(uint8_t *adu, uint16_t len)
 	write_len = BigLittleSwap16(write_len);
 	mcu_receive_write_flash_addr = write_addr;
 	mcu_receive_write_flash_len = write_len;
-	user_flash_write(mcu_receive_write_flash_addr,
+	user_flash_write(mcu_receive_write_flash_addr+USER_FLASH_APP_DATA_BASE,
                      mcu_receive_write_flash_len,
 	                 &data[4]);
 	//memcpy(&shared_memory_flash[mcu_receive_write_flash_addr], &data[4], mcu_receive_write_flash_len);
@@ -800,9 +813,11 @@ uint16_t mb_rsp(uint8_t *adu, uint16_t len, uint8_t *out)
 	return 0;
 }
 
-uint8_t *high = (uint8_t *)&shared_memory_ram[0];
-uint8_t *sp_seat = (uint8_t *)&shared_memory_ram[8];
-uint8_t *sp_env = (uint8_t *)&shared_memory_ram[9];
+enum
+{
+	FUNCTION_NORMAL = 0,
+	FUNCTION_FIRMWARE_UPDATE = 1
+};
 
 void modbus_udp_task(void)
 {
@@ -810,16 +825,26 @@ void modbus_udp_task(void)
 	if (flag_first_run)
 	{
 		flag_first_run = 0;
-		high[0] = 32;
-		high[1] = 64;
-		high[2] = 128;
+		ram->high[0] = 32;
+		ram->high[1] = 64;
+		ram->high[2] = 128;
 	}
-	lcd_high_update(high[0], high[1], high[2]);
+	lcd_high_update(ram->high[0], ram->high[1], ram->high[2]);
 }
 
 void modbus_bus485_task(void)
 {
-	bus485_control(high, *sp_seat, *sp_env, 0);
+	bus485_control(ram->high, ram->sp_seat, ram->sp_env, 0);
+}
+
+void modbus_switch_function_task(void)
+{
+	if (ram->switch_function == FUNCTION_FIRMWARE_UPDATE)
+	{
+		boot_set_update_flag();
+		HAL_NVIC_SystemReset();
+		while(1);
+	}
 }
 
 

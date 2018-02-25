@@ -2,6 +2,7 @@
 #define __USER_CONFIG_H
 
 #include "stm32f1xx_hal.h"
+#include <stdbool.h>
 
 #define ABS(x) ((x)>0?(x):-(x)) 
 
