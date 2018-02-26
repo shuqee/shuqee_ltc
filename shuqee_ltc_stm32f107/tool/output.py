@@ -28,3 +28,14 @@ if os.path.exists(path_app_hex) == False:
 	sys.exit(0)
 	
 shutil.copyfile(path_app_hex,path_output_app_hex)
+
+name_bootloader_hex = "bootloader.hex"
+path_bootloader_hex = "..\\bootloader\\output\\" + name_bootloader_hex
+path_output_bootloader_hex = path_output + name_bootloader_hex
+
+if os.path.exists(path_bootloader_hex) == False:
+	sys.exit(0)
+	
+shutil.copyfile(path_bootloader_hex,path_output_bootloader_hex)
+
+os.system("python merge.py")

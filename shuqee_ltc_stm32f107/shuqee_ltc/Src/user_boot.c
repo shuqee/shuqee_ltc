@@ -13,10 +13,10 @@ typedef struct boot_status
 #pragma pack()
 
 boot_status_t *boot_status = (boot_status_t *)USER_FLASH_BOOT_DATA_BASE;
-const uint8_t bootloader_bin[] __attribute__((at(USER_FLASH_BOOTLOADER_BASE))) = {BOOTLOADER_BIN};
-const boot_status_t boot_status_init __attribute__((at(USER_FLASH_BOOT_DATA_BASE))) = {
-.update_flag = false
-};
+//const uint8_t bootloader_bin[] __attribute__((at(USER_FLASH_BOOTLOADER_BASE))) = {BOOTLOADER_BIN};
+//const boot_status_t boot_status_init __attribute__((at(USER_FLASH_BOOT_DATA_BASE))) = {
+//.update_flag = false
+//};
 typedef void (*pFunction)(void);
 
 void boot_set_update_flag(void)
