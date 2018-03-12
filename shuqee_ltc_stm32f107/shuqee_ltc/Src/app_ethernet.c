@@ -268,6 +268,8 @@ void DHCP_Process(struct netif *netif)
           
           /* Stop DHCP */
           dhcp_stop(netif);
+		  /* When stop DHCP,should clear the dhcp start flag */
+		  dhcp_start_flag = 0;
           
           /* Static address used */
           IP_ADDR4(&ipaddr, IP_ADDR0 ,IP_ADDR1 , IP_ADDR2 , IP_ADDR3 );
