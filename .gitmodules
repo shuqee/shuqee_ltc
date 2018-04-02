@@ -1,0 +1,3 @@
+[submodule "shuqee_ltc_stm32f107/bootloader"]
+	path = shuqee_ltc_stm32f107/bootloader
+	url = https://github.com/shuqee/bootloader.git

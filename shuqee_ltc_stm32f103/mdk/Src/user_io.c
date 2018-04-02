@@ -1,6 +1,7 @@
 #include "stm32f1xx_hal.h"
 #include "user_config.h"
 #include "user_io.h"
+#include "spi_flash.h"
 
 void user_io_init(void)
 {
@@ -29,10 +30,29 @@ void user_io_init(void)
 	
 	static int led_count = 0;
 	
-	static int frame = 0;
-	static int second = 0;
-	static int minute = 0;
-	static int hour = 0;
+	static uint8_t frame = 0;
+	static uint8_t second = 0;
+	static uint8_t minute = 0;
+	static uint8_t hour = 0;
+	
+uint8_t get_ltc_frame(void)
+{
+	return frame;
+}
+
+uint8_t get_ltc_second(void)
+{
+	return second;
+}
+
+uint8_t get_ltc_minute(void)
+{
+	return minute;
+}
+uint8_t get_ltc_hour(void)
+{
+	return hour;
+}
 
 void ltc_decode(int interval)
 {	
@@ -59,14 +79,32 @@ void ltc_decode(int interval)
 			{
 				++short_interval_count;
 				interval_last = interval;
+				error_count = 0;
 				return;
+			}
+			else
+			{
+				error_count++;
 			}
 
 			if (ABS(adaption_long_interval-interval) < 10)
 			{
 				++long_interval_count;
 				interval_last = interval;
+				error_count = 0;
 				return;
+			}
+			else
+			{
+				error_count++;
+			}
+			
+			if (error_count > 100)
+			{
+				error_count = 0;
+				interval_last = 0;
+				return;
+				
 			}
 
 			if (ABS(interval-interval_last) < 20)
@@ -213,7 +251,7 @@ void ltc_decode(int interval)
 				second = ((ltc_receive_data[3]&0x07)*10)+(ltc_receive_data[2]&0x0f);
 				minute = ((ltc_receive_data[5]&0x07)*10)+(ltc_receive_data[4]&0x0f);
 				hour = ((ltc_receive_data[7]&0x03)*10)+(ltc_receive_data[6]&0x0f);
-
+				
 				if ((ltc_receive_data[8] != 0xfc) ||
 					(ltc_receive_data[9] != 0xbf))
 				{
