@@ -1,5 +1,6 @@
 #include "stm32f1xx_hal.h"
 #include "user_uart.h"
+#include "user_io.h"
 
 #include <string.h>
 
@@ -73,3 +74,75 @@ int fputc(int ch, FILE *f)
 	while(__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TXE) == RESET);
 	return ch; 
 }
+
+/*处理特效灯的显示模块*/
+void special_checkout(uint8_t spcial_data)
+{
+	uint8_t i,spcial_temp;
+	for(i=0;i<8;i++)
+	{
+		spcial_temp=spcial_data&(0x01<<i);
+		if(spcial_temp!=0)  //有特效；
+		{
+			switch(i)
+			{
+				case 0:
+					SPCIAL_1_ON();
+					break;
+				case 1:
+					SPCIAL_2_ON();
+					break;
+				case 2:
+					SPCIAL_3_ON();
+					break;
+				case 3:
+					SPCIAL_4_ON();
+					break;	
+				case 4:
+					SPCIAL_5_ON();
+					break;
+				case 5:
+					SPCIAL_6_ON();
+					break;
+				case 6:
+					SPCIAL_7_ON();
+					break;
+				case 7:
+					SPCIAL_8_ON();
+					break;					
+			}	
+		}	
+		else
+		{
+			switch(i)
+			{	
+				case 0:
+					SPCIAL_1_OFF();
+					break;
+				case 1:
+					SPCIAL_2_OFF();
+					break;
+				case 2:
+					SPCIAL_3_OFF();
+					break;
+				case 3:
+					SPCIAL_4_OFF();
+					break;	
+				case 4:
+					SPCIAL_5_OFF();
+					break;
+				case 5:
+					SPCIAL_6_OFF();
+					break;
+				case 6:
+					SPCIAL_7_OFF();
+					break;
+				case 7:
+					SPCIAL_8_OFF();
+					break;	
+			}		
+		}	
+	}
+}
+
+

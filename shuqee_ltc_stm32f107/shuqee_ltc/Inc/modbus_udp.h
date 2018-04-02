@@ -11,5 +11,5 @@ extern uint16_t mb_rsp(uint8_t *adu, uint16_t len, uint8_t *data);
 extern uint16_t send_ltc(uint8_t *send_buf);
 extern void modbus_bus485_task(void);
 extern void modbus_switch_function_task(void);
-
+extern void special_display(void);
 #endif /* __MODBUS_UDP_H */
