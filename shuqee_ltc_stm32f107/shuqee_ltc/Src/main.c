@@ -13,7 +13,13 @@
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
-  * modification, are permitted, provided that the following conditions are met:
+  * modification, are permitted, provided that the following conditions are met
+	
+	
+	
+	
+	
+	
   *
   * 1. Redistribution of source code must retain the above copyright notice, 
   *    this list of conditions and the following disclaimer.
@@ -393,10 +399,10 @@ static void MX_GPIO_Init(void)
                           |OUTPUT_LED3_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOD, SPCIAL_1_Pin|SPCIAL_2_Pin|SPCIAL_3_Pin|SPCIAL_4_Pin, GPIO_PIN_SET);
+  HAL_GPIO_WritePin(GPIOD, SPCIAL_3_Pin|SPCIAL_4_Pin|SPCIAL_1_Pin|SPCIAL_2_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, SPCIAL_8_Pin|SPCIAL_7_Pin|SPCIAL_6_Pin|SPCIAL_5_Pin 
+  HAL_GPIO_WritePin(GPIOC, SPCIAL_5_Pin|SPCIAL_6_Pin|SPCIAL_8_Pin|SPCIAL_7_Pin 
                           |OUTPUT_485_RW_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin : SPI_LCD_CS_Pin */
@@ -419,14 +425,14 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SPCIAL_1_Pin SPCIAL_2_Pin SPCIAL_3_Pin SPCIAL_4_Pin */
-  GPIO_InitStruct.Pin = SPCIAL_1_Pin|SPCIAL_2_Pin|SPCIAL_3_Pin|SPCIAL_4_Pin;
+  /*Configure GPIO pins : SPCIAL_3_Pin SPCIAL_4_Pin SPCIAL_1_Pin SPCIAL_2_Pin */
+  GPIO_InitStruct.Pin = SPCIAL_3_Pin|SPCIAL_4_Pin|SPCIAL_1_Pin|SPCIAL_2_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : SPCIAL_8_Pin SPCIAL_7_Pin SPCIAL_6_Pin SPCIAL_5_Pin */
-  GPIO_InitStruct.Pin = SPCIAL_8_Pin|SPCIAL_7_Pin|SPCIAL_6_Pin|SPCIAL_5_Pin;
+  /*Configure GPIO pins : SPCIAL_5_Pin SPCIAL_6_Pin SPCIAL_8_Pin SPCIAL_7_Pin */
+  GPIO_InitStruct.Pin = SPCIAL_5_Pin|SPCIAL_6_Pin|SPCIAL_8_Pin|SPCIAL_7_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_OD;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);

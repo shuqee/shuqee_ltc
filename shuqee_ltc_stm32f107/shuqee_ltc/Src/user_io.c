@@ -98,7 +98,7 @@ void ltc_decode(int interval)
 				return;
 			}
 
-			if (ABS(adaption_short_interval-interval) < 10)
+			if (ABS(adaption_short_interval-interval) < 20)
 			{
 				++short_interval_count;
 				interval_last = interval;
@@ -110,7 +110,7 @@ void ltc_decode(int interval)
 				error_count++;
 			}
 
-			if (ABS(adaption_long_interval-interval) < 10)
+			if (ABS(adaption_long_interval-interval) < 20)
 			{
 				++long_interval_count;
 				interval_last = interval;
