@@ -847,4 +847,7 @@ void modbus_switch_function_task(void)
 	}
 }
 
-
+void special_display(void)
+{
+	special_checkout(ram->sp_env);
+}	

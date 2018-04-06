@@ -55,6 +55,7 @@
 #include "modbus_udp.h"
 #include "user_time.h"
 #include "user_io.h"
+#include "user_uart.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -167,6 +168,7 @@ void udp_echoclient_send(void)
 		clr_timer2_isr_flag();
 		modbus_bus485_task();
 		modbus_switch_function_task();
+		special_display();
 	}
 	
 	if (get_ltc_frame_update_event() == 1)
