@@ -825,9 +825,9 @@ void modbus_udp_task(void)
 	if (flag_first_run)
 	{
 		flag_first_run = 0;
-		ram->high[0] = 32;
-		ram->high[1] = 64;
-		ram->high[2] = 128;
+		ram->high[0] = 0;
+		ram->high[1] = 0;
+		ram->high[2] = 0;
 	}
 	lcd_high_update(ram->high[0], ram->high[1], ram->high[2]);
 }
