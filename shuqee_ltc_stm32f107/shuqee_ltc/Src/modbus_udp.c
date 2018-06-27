@@ -4,6 +4,7 @@
 #include "user_flash.h"
 #include "spi_lcd.h"
 #include "user_uart.h"
+#include "user_can.h"
 #include "user_io.h"
 #include "user_boot.h"
 #include "stdio.h"
@@ -851,3 +852,10 @@ void special_display(void)
 {
 	special_checkout(ram->sp_env);
 }	
+
+void modbus_buscan_task(void)
+{
+	buscan_control(ram->high, ram->sp_seat, ram->sp_env,0, 0);			
+	
+}	
+

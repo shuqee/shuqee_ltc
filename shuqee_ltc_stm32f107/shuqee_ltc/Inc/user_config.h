@@ -13,6 +13,7 @@
 	__set_PRIMASK(0); \
 }while(0)
 
+extern CAN_HandleTypeDef hcan1;
 extern SPI_HandleTypeDef hspi1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;

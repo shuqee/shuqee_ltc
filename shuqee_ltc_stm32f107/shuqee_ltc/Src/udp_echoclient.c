@@ -57,6 +57,8 @@
 #include "user_io.h"
 #include "user_uart.h"
 #include <string.h>
+#include  "user_can.h"
+#include "sw_timer.h"
 #include <stdio.h>
 
 /* Private typedef -----------------------------------------------------------*/
@@ -159,17 +161,28 @@ void udp_echoclient_connect(void)
   * @param port the remote port from which the packet was received
   * @retval None
   */
+static int count_can=0;
 void udp_echoclient_send(void)
 {
 	uint16_t data_len;
 	
 	if (get_timer2_isr_flag() == 1)
 	{
-		clr_timer2_isr_flag();
-		modbus_bus485_task();
+		count_can++;
+		if(count_can>=5)
+		{
+		  modbus_bus485_task();
+			count_can=0;
+		}
+		/*can*/
+		modbus_buscan_task();
 		modbus_switch_function_task();
 		special_display();
+		clr_timer2_isr_flag();
 	}
+	/*handle for can to sent*/
+//	can_action_handle();	 
+	sw_timer_handle(); 
 	
 	if (get_ltc_frame_update_event() == 1)
 	{

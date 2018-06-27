@@ -13,13 +13,7 @@
   * All rights reserved.
   *
   * Redistribution and use in source and binary forms, with or without 
-  * modification, are permitted, provided that the following conditions are met
-	
-	
-	
-	
-	
-	
+  * modification, are permitted, provided that the following conditions are met:
   *
   * 1. Redistribution of source code must retain the above copyright notice, 
   *    this list of conditions and the following disclaimer.
@@ -67,9 +61,13 @@
 #include "app_ethernet.h"
 #include "udp_echoclient.h"
 #include "flash_map.h"
+#include "user_can.h"
+#include "sw_timer.h"
+
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+
 SPI_HandleTypeDef hspi1;
 
 TIM_HandleTypeDef htim2;
@@ -78,6 +76,7 @@ TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 DMA_HandleTypeDef hdma_usart3_tx;
+CAN_HandleTypeDef hcan1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/
@@ -93,6 +92,7 @@ static void MX_USART2_UART_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_TIM2_Init(void);
 static void MX_TIM3_Init(void);
+static void MX_CAN1_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
@@ -135,6 +135,7 @@ int main(void)
   MX_USART3_UART_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_CAN1_Init();
 
   /* USER CODE BEGIN 2 */
   user_io_init();
@@ -142,6 +143,8 @@ int main(void)
   user_spi_init();
   user_time_init();
   spi_lcd_init();
+	user_can_init();  
+	sw_timer_init(); 
   udp_echoclient_connect();
   User_notification(&gnetif);
   /* USER CODE END 2 */
@@ -225,6 +228,29 @@ void SystemClock_Config(void)
   HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 }
 
+/* CAN1 init function */
+static void MX_CAN1_Init(void)
+{
+
+  hcan1.Instance = CAN1;
+  hcan1.Init.Prescaler = 12;
+  hcan1.Init.Mode = CAN_MODE_NORMAL;
+  hcan1.Init.SJW = CAN_SJW_1TQ;
+  hcan1.Init.BS1 = CAN_BS1_5TQ;
+  hcan1.Init.BS2 = CAN_BS2_6TQ;
+  hcan1.Init.TTCM = DISABLE;
+  hcan1.Init.ABOM = DISABLE;
+  hcan1.Init.AWUM = DISABLE;
+  hcan1.Init.NART = DISABLE;
+  hcan1.Init.RFLM = DISABLE;
+  hcan1.Init.TXFP = DISABLE;
+  if (HAL_CAN_Init(&hcan1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+}
+
 /* SPI1 init function */
 static void MX_SPI1_Init(void)
 {
@@ -259,7 +285,7 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 7199;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 499;
+  htim2.Init.Period = 99;
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
