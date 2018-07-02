@@ -93,7 +93,6 @@ MxCube.Version=4.23.0
 MxDb.Version=DB.4.0.230
 NVIC.BusFault_IRQn=true\:0\:0\:false\:false\:true\:false
 NVIC.CAN1_RX0_IRQn=true\:0\:0\:false\:false\:true\:true
-NVIC.CAN1_SCE_IRQn=true\:0\:0\:false\:false\:true\:true
 NVIC.DMA1_Channel2_IRQn=true\:0\:0\:false\:false\:true\:false
 NVIC.DebugMonitor_IRQn=true\:0\:0\:false\:false\:true\:false
 NVIC.ETH_IRQn=true\:0\:0\:false\:false\:true\:true

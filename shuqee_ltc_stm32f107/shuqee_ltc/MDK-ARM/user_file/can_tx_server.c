@@ -28,7 +28,7 @@ void task_can_tx(void)
 static uint8_t can_send_buff[8]={0x00,0x00,0x55};
 static void can_tx_hb(void)    //心跳的内部发送函数；
 {
-	can_send(HEART_BEAT,can_send_buff,8);	 
+	//can_send(HEART_BEAT,can_send_buff,8);	 
 }	
 /***************定义CAN的相关要素***************/
 typedef struct

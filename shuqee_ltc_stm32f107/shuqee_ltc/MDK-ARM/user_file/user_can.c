@@ -87,6 +87,7 @@ void user_can_init(void)
 	can_txmsg_config();
 	can_rxmsg_config();
   can_scale32_idmask();  	
+	CAN1->MCR|=(1<<6);
 	HAL_CAN_Receive_IT(&hcan1,CAN_FIFO0);
 }
 
@@ -140,8 +141,8 @@ void HAL_CAN_RxCpltCallback(CAN_HandleTypeDef* hcan)
 typedef struct buscan_control_pack
 {	
 	uint8_t high[3];
-	uint8_t speed[3];
 	uint8_t sp_seat_env_id[3];
+  uint8_t speed[3];
 } buscan_control_pack_t;
 
 #pragma pack()
@@ -151,22 +152,26 @@ static uint8_t mark_cantx;
 void buscan_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env,uint8_t *speed, uint8_t seat_id) 
 {
 	memcpy(pack_can.high,high,sizeof(pack_can.high));
-	memcpy(pack_can.speed,speed,sizeof(pack_can.speed));
+	//memcpy(pack_can.speed,speed,sizeof(pack_can.speed));
 	pack_can.sp_seat_env_id[0]=sp_env;
 	pack_can.sp_seat_env_id[1]=sp_seat;
 	pack_can.sp_seat_env_id[2]=seat_id;
-	switch(mark_cantx)
-	{
-		case 0: mark_cantx++;
-						can_send(HIGHT_MSG_ID,pack_can.high,8);    //先发	HIGHT_MSG_ID=0x100,  //高度ID
-						break;
-		case 1: mark_cantx++;
-						can_send(SPEED_MSG_ID,pack_can.speed, 8)	;			//SPEED_MSG_ID  速度ID
-						break;
-		case 2: mark_cantx=0;
-						can_send(SP_MSG_ID,pack_can.sp_seat_env_id,8);     //SP_MSG_ID				  //特效ID
-						break;
-	}			
+	can_send(HIGHT_MSG_ID,pack_can.high,8);    //先发	HIGHT_MSG_ID=0x100,  //高度ID
+//	switch(mark_cantx)
+//	{
+//		case 0: mark_cantx++;
+//						can_send(HIGHT_MSG_ID,pack_can.high,8);    //先发	HIGHT_MSG_ID=0x100,  //高度ID
+//						break;
+//		case 1: mark_cantx++;
+////						can_send(SPEED_MSG_ID,pack_can.speed, 8)	;			//SPEED_MSG_ID  速度ID
+//						break;
+//		case 2: mark_cantx=0;
+//						can_send(SP_MSG_ID,pack_can.sp_seat_env_id,8);     //SP_MSG_ID				  //特效ID
+//						break;
+//	}			
 }
 
+void HAL_CAN_ErrorCallback(CAN_HandleTypeDef* hcan)
+{
 
+}	

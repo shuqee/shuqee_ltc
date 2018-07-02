@@ -67,6 +67,7 @@
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
+CAN_HandleTypeDef hcan1;
 
 SPI_HandleTypeDef hspi1;
 
@@ -76,7 +77,6 @@ TIM_HandleTypeDef htim3;
 UART_HandleTypeDef huart2;
 UART_HandleTypeDef huart3;
 DMA_HandleTypeDef hdma_usart3_tx;
-CAN_HandleTypeDef hcan1;
 
 /* USER CODE BEGIN PV */
 /* Private variables ---------------------------------------------------------*/

@@ -14,7 +14,7 @@
         <TargetCommonOption>
           <Device>STM32F107VC</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32F1xx_DFP.2.2.0</PackID>
+          <PackID>Keil.STM32F1xx_DFP.1.0.5</PackID>
           <PackURL>http://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x2000FFFF) IROM(0x8000000-0x803FFFF) CLOCK(25000000) CPUTYPE("Cortex-M3")</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -365,7 +365,7 @@
               <MiscControls>--C99</MiscControls>
               <Define>USE_HAL_DRIVER,STM32F107xC</Define>
               <Undefine></Undefine>
-              <IncludePath>../Inc;  ../Middlewares/Third_Party/LwIP/src/include;  ../Middlewares/Third_Party/LwIP/system;  ../Drivers/STM32F1xx_HAL_Driver/Inc;  ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;  ../Middlewares/Third_Party/LwIP/src/include/netif/ppp;  ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;  ../Middlewares/Third_Party/LwIP/src/include/lwip;  ../Middlewares/Third_Party/LwIP/src/include/lwip/apps;  ../Middlewares/Third_Party/LwIP/src/include/lwip/priv;  ../Middlewares/Third_Party/LwIP/src/include/lwip/prot;  ../Middlewares/Third_Party/LwIP/src/include/netif;  ../Middlewares/Third_Party/LwIP/src/include/posix;  ../Middlewares/Third_Party/LwIP/src/include/posix/sys;  ../Middlewares/Third_Party/LwIP/system/arch;  ../Drivers/CMSIS/Include;  ..\..\bootloader\lib</IncludePath>
+              <IncludePath>../Inc;   ../Middlewares/Third_Party/LwIP/src/include;   ../Middlewares/Third_Party/LwIP/system;   ../Drivers/STM32F1xx_HAL_Driver/Inc;   ../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy;   ../Middlewares/Third_Party/LwIP/src/include/netif/ppp;   ../Drivers/CMSIS/Device/ST/STM32F1xx/Include;   ../Middlewares/Third_Party/LwIP/src/include/lwip;   ../Middlewares/Third_Party/LwIP/src/include/lwip/apps;   ../Middlewares/Third_Party/LwIP/src/include/lwip/priv;   ../Middlewares/Third_Party/LwIP/src/include/lwip/prot;   ../Middlewares/Third_Party/LwIP/src/include/netif;   ../Middlewares/Third_Party/LwIP/src/include/posix;   ../Middlewares/Third_Party/LwIP/src/include/posix/sys;   ../Middlewares/Third_Party/LwIP/system/arch;   ../Drivers/CMSIS/Include;   ..\..\bootloader\lib;   .\user_file</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -866,6 +866,11 @@
               <FileType>1</FileType>
               <FilePath>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_spi.c</FilePath>
             </File>
+            <File>
+              <FileName>stm32f1xx_hal_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>../Drivers/STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_can.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -960,6 +965,21 @@
               <FileName>user_boot.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\user_boot.c</FilePath>
+            </File>
+            <File>
+              <FileName>can_tx_server.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user_file\can_tx_server.c</FilePath>
+            </File>
+            <File>
+              <FileName>sw_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user_file\sw_timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>user_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user_file\user_can.c</FilePath>
             </File>
           </Files>
         </Group>
