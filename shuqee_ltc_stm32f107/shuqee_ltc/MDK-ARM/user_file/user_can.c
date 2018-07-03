@@ -3,6 +3,7 @@
 #include "user_time.h"
 #include "user_uart.h"
 #include <string.h>
+#include "modbus_udp.h"
  
 CanTxMsgTypeDef txmessage;
 CanRxMsgTypeDef rxmessage;
@@ -155,8 +156,12 @@ void buscan_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env,uint8_t *spee
 	//memcpy(pack_can.speed,speed,sizeof(pack_can.speed));
 	pack_can.sp_seat_env_id[0]=sp_env;
 	pack_can.sp_seat_env_id[1]=sp_seat;
-	pack_can.sp_seat_env_id[2]=seat_id;
+	pack_can.sp_seat_env_id[2]=seat_id;  
 	can_send(HIGHT_MSG_ID,pack_can.high,8);    //先发	HIGHT_MSG_ID=0x100,  //高度ID
+	if(pack_can.sp_seat_env_id[1]&0x01)  
+	{
+		clr_reset_bit(); 
+	}
 //	switch(mark_cantx)
 //	{
 //		case 0: mark_cantx++;

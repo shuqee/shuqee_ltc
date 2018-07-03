@@ -13,4 +13,5 @@ extern void modbus_bus485_task(void);
 extern void modbus_switch_function_task(void);
 extern void special_display(void);
 extern void modbus_buscan_task(void);
+extern void clr_reset_bit(void);
 #endif /* __MODBUS_UDP_H */

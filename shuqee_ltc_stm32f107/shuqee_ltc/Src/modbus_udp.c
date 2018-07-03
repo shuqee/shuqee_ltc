@@ -855,7 +855,11 @@ void special_display(void)
 
 void modbus_buscan_task(void)
 {
-	buscan_control(ram->high, ram->sp_seat, ram->sp_env,0, 0);			
+	buscan_control(ram->high, ram->sp_seat, ram->sp_env,NULL, 0);			
 	
 }	
 
+void clr_reset_bit(void)
+{
+	ram->sp_seat&=0xfe;
+}	
