@@ -143,20 +143,37 @@ typedef struct buscan_control_pack
 {	
 	uint8_t high[3];
 	uint8_t sp_seat_env_id[3];
-  uint8_t speed[3];
+  uint8_t am[2];
 } buscan_control_pack_t;
 
 #pragma pack()
 buscan_control_pack_t pack_can ;
 static uint8_t mark_cantx;
-
-void buscan_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env,uint8_t *speed, uint8_t seat_id) 
+//static uint8_t counter,counter1,counter2=0;   //for test;
+void buscan_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env,uint8_t *speed, uint8_t seat_id,uint8_t am,uint8_t period) 
 {
 	memcpy(pack_can.high,high,sizeof(pack_can.high));
 	//memcpy(pack_can.speed,speed,sizeof(pack_can.speed));
 	pack_can.sp_seat_env_id[0]=sp_env;
 	pack_can.sp_seat_env_id[1]=sp_seat;
-	pack_can.sp_seat_env_id[2]=seat_id;  
+	pack_can.sp_seat_env_id[2]=seat_id; 
+	
+//	counter++;
+//	pack_can.high[0]=counter;
+//	if(counter>=255)
+//	{
+//			counter=0;
+//		  counter1++;
+//			if(pack_can.high[1]>=255)
+//			{
+//				counter2++; 
+//			}		
+//	}	
+//	pack_can.high[1]=counter1;
+//	pack_can.high[2]=counter2;
+	
+  pack_can.am[0]=am;
+	pack_can.am[1]=period;
 	can_send(HIGHT_MSG_ID,pack_can.high,8);    //先发	HIGHT_MSG_ID=0x100,  //高度ID
 	if(pack_can.sp_seat_env_id[1]&0x01)  
 	{

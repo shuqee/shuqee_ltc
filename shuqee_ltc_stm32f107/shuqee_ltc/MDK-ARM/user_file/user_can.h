@@ -15,16 +15,16 @@ typedef enum
 	NM_MSG_ID = 0x400
 }can_msg_id_t;	
 
+extern uint32_t count_for_485;
 extern void user_can_init(void);  
 extern void can_action_date_sent(void);
-extern void buscan_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env,uint8_t *speed, uint8_t seat_id);
 extern void can_action_handle(void);
 extern void set_can_rx_flag(uint16_t);
 extern uint16_t get_hb_display(uint8_t);
 extern void can_send(uint16_t msg_id, uint8_t *data, uint16_t len);
 
 /**********************提供的外部函数调用*****************************/
-extern void buscan_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env,uint8_t *speed, uint8_t seat_id);
+extern void buscan_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env,uint8_t *speed, uint8_t seat_id,uint8_t am,uint8_t period);
 extern void set_heart_msg(uint8_t *tx_data);
 extern void set_hight_msg(uint8_t *tx_data);
 extern void set_speed_msg(uint8_t *tx_data);

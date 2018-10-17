@@ -100,6 +100,7 @@ void udp_server_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p
 			udp_connect(upcb_client, addr, port);
 			udp_client_send(udp_send_buf, data_len);
 			LCD_UsrLog ("UdpConnectComplete\n");
+			LED3_OFF();
 			user_time_start();
 		}
 	}
@@ -162,12 +163,14 @@ void udp_echoclient_connect(void)
   * @retval None
   */
 static int count_can=0;
+uint32_t count_for_485=0;
 void udp_echoclient_send(void)
 {
 	uint16_t data_len;
 	
 	if (get_timer2_isr_flag() == 1)
 	{
+		clr_timer2_isr_flag();
 		count_can++;
 		if(count_can>=5)
 		{
@@ -175,15 +178,18 @@ void udp_echoclient_send(void)
 			count_can=0;
 		}
 		/*can*/
-		modbus_buscan_task();
+//		modbus_buscan_task();
 		modbus_switch_function_task();
 		special_display();
-		clr_timer2_isr_flag();
 	}
 	/*handle for can to sent*/
+//	ac_overtime_count(); 
 //	can_action_handle();	 
 	sw_timer_handle(); 
-	
+	if (HAL_GetTick() - count_for_485 >= 1000)  //¼ì²âÊÇ·ñ³¬Ê±£»
+	{
+		modbus_485_overtime();
+	}
 	if (get_ltc_frame_update_event() == 1)
 	{
 		clr_ltc_frame_update_event();
@@ -257,10 +263,11 @@ void udp_client_send(uint8_t *data, uint16_t len)
   * @param port the remote port from which the packet was received
   * @retval None
   */
+static uint32_t udp_cnt=0;      
 void udp_receive_callback(void *arg, struct udp_pcb *upcb, struct pbuf *p, const ip_addr_t *addr, u16_t port)
 {
 	uint16_t len;
-
+	udp_cnt++; 
 	len = mb_rsp((uint8_t *)(p->payload), (uint16_t)(p->len), udp_send_buf);
 	if (len != 0)
 	{

@@ -74,7 +74,7 @@ typedef enum
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 #ifdef USE_DHCP
-#define MAX_DHCP_TRIES  0x4
+#define MAX_DHCP_TRIES  0x2
 extern uint32_t DHCPfineTimer;
 __IO uint8_t DHCP_state = DHCP_OFF;
 #endif

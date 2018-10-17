@@ -1,6 +1,7 @@
 #include "stm32f1xx_hal.h"
 #include "user_uart.h"
 #include "user_io.h"
+#include "modbus_udp.h"
 
 #include <string.h>
 
@@ -13,7 +14,7 @@ static uint8_t uart3_receive_data = 0U;
 void user_uart_init(void)
 {
 	HAL_UART_Receive_IT(&huart2, (uint8_t *)&uart2_receive_data, 1);	//串口接收一个字节，并通过中断返回结果
-    HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart3_receive_data, 1);
+  HAL_UART_Receive_IT(&huart3, (uint8_t *)&uart3_receive_data, 1);
 }
 
 extern void lcd_printf(const char *fmt /*format*/, ...);
@@ -41,6 +42,11 @@ void uart_send(uint8_t *data, uint16_t len)
 	HAL_UART_Transmit_DMA(&huart3, data, len);
 }
 
+void uart_send_huart2(uint32_t tens,uint32_t uint)
+{
+	printf("tens=%d   ,    uints=%d   ,can_send=%d\n "  ,tens ,uint,udp_test_can.can_count);
+}	
+
 #pragma pack(1)
 
 typedef struct bus485_control_pack
@@ -65,7 +71,7 @@ void bus485_control(uint8_t *high, uint8_t sp_seat, uint8_t sp_env, uint8_t seat
 	pack.sp_seat = sp_seat;
 	pack.sp_env = sp_env;
 	pack.seat_id = seat_id;
-	HAL_UART_Transmit_DMA(&huart3, (uint8_t *)&pack, sizeof(pack));
+	HAL_UART_Transmit_DMA(&huart3, (uint8_t *)&pack, sizeof(pack));	
 }
 
 int fputc(int ch, FILE *f)

@@ -23,6 +23,8 @@
                                    (((uint32_t)(A) & 0x0000ff00) << 8) | \
                                    (((uint32_t)(A) & 0x000000ff) << 24))  
 
+
+struct udp_test_can udp_test_can;
 enum function_code
 {
 	funcode_pc_connect       = 100,
@@ -737,7 +739,19 @@ uint16_t mb_rsp_connect(uint8_t *adu, uint16_t len, uint8_t *out)
 	
 	return 0;
 }
+uint32_t count_udp_ten=0,count_udp_uint=0;
 
+//void ac_overtime_count(void)
+//{
+//	if(udp_test_can.udp_test_flag)
+//	{
+//		if((HAL_GetTick()-udp_test_can.count)>=1000)  //超时；
+//		{
+//			SAFE(udp_test_can.udp_test_flag=0);
+//		}
+//	}
+//}
+uint16_t count_led2=0;
 uint16_t mb_rsp(uint8_t *adu, uint16_t len, uint8_t *out)
 {	
 	uint8_t address;
@@ -751,10 +765,30 @@ uint16_t mb_rsp(uint8_t *adu, uint16_t len, uint8_t *out)
 			case id_broadcast:
 				function_code = get_funcode(adu, len);
 				switch (function_code)
-				{
+				{					
 					case funcode_pc_write_ram:
+								////////////////////////////////////////
+//					  SAFE( udp_test_can.udp_test_flag=1); //开启CAN计数标志位；
+//						udp_test_can.count=HAL_GetTick();  //赋值当前数值；	
+//						count_udp_uint++;
+//						if(count_udp_uint==0xffffffff)
+//						{
+//							count_udp_ten++;
+//							count_udp_uint=0;
+//						}	
+//						uart_send_huart2( count_udp_ten,count_udp_uint); 
+					
+						///////////////////////////
 						if (get_write_ram_cmd(adu, len))
 						{
+						 count_for_485=HAL_GetTick(); 
+						  modbus_buscan_task();	
+						count_led2++;
+						if(count_led2>10)
+						{
+							count_led2=0;
+							LED3_TOGGLE();
+						}							
 							return 0;
 						}
 						break;
@@ -838,6 +872,14 @@ void modbus_bus485_task(void)
 	bus485_control(ram->high, ram->sp_seat, ram->sp_env, 0);
 }
 
+void modbus_485_overtime(void)
+{
+	ram->sp_env=0;
+	ram->sp_seat=0;
+	ram->reserve_0[0]=0;
+	ram->reserve_0[1]=0;
+}	
+
 void modbus_switch_function_task(void)
 {
 	if (ram->switch_function == FUNCTION_FIRMWARE_UPDATE)
@@ -852,10 +894,15 @@ void special_display(void)
 {
 	special_checkout(ram->sp_env);
 }	
-
+static uint32_t can_cnt=0;
 void modbus_buscan_task(void)
 {
-	buscan_control(ram->high, ram->sp_seat, ram->sp_env,NULL, 0);			
+	buscan_control(ram->high, ram->sp_seat, ram->sp_env,NULL, 0,ram->reserve_0[0],ram->reserve_0[1]);		
+  can_cnt++; 
+//  if(udp_test_can.udp_test_flag)
+//	{
+//		SAFE(udp_test_can.can_count ++);
+//	}		
 	
 }	
 
